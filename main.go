@@ -11,7 +11,7 @@ import (
 func main() {
 	router := gin.Default()
 	router.Use(Cors())
-	router.GET("/", test)
+	router.POST("/", test)
 	port := os.Getenv("PORT")
 
 	if port == "" {
