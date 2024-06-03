@@ -141,21 +141,36 @@ func (event *WebhookEvent) Response() {
 	for _, r := range event.Message.Text {
 		if r >= 'A' && r <= 'Z' {
 			msg.Text += "$"
-			emoji := Emoji{
+			msg.Emojis = append(msg.Emojis, Emoji{
 				Index:     len(msg.Text) - 1,
 				ProductId: "5ac21a8c040ab15980c9b43f",
 				EmojiId:   util.IntToDigits(int(r)-64, 3),
-			}
-			msg.Emojis = append(msg.Emojis, emoji)
+			})
 		}
 		if r >= 'a' && r <= 'z' {
 			msg.Text += "$"
-			emoji := Emoji{
+			msg.Emojis = append(msg.Emojis, Emoji{
 				Index:     len(msg.Text) - 1,
 				ProductId: "5ac21a8c040ab15980c9b43f",
-				EmojiId:   util.IntToDigits(int(r)-96, 3),
+				EmojiId:   util.IntToDigits(int(r)-70, 3),
+			})
+		}
+		if r >= '0' && r <= '9' {
+			if r == '0' {
+				msg.Text += "$"
+				msg.Emojis = append(msg.Emojis, Emoji{
+					Index:     len(msg.Text) - 1,
+					ProductId: "5ac21a8c040ab15980c9b43f",
+					EmojiId:   "062",
+				})
+			} else {
+				msg.Text += "$"
+				msg.Emojis = append(msg.Emojis, Emoji{
+					Index:     len(msg.Text) - 1,
+					ProductId: "5ac21a8c040ab15980c9b43f",
+					EmojiId:   util.IntToDigits(int(r)+4, 3),
+				})
 			}
-			msg.Emojis = append(msg.Emojis, emoji)
 		}
 	}
 
