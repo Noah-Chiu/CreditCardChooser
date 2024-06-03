@@ -128,8 +128,8 @@ func (event *WebhookEvent) Response() {
 	}
 
 	if strings.Contains(event.Message.Text, "大湯匙") {
-		msg.Text = "小湯匙我愛妳"
-		msg.Emojis.Index = 6
+		msg.Text = "小湯匙我愛妳$"
+		msg.Emojis.Index = 0
 		msg.Emojis.ProductId = "5ac1bfd5040ab15980c9b435"
 		msg.Emojis.EmojiId = "215"
 	}
