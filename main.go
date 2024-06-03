@@ -1,6 +1,8 @@
 package main
 
 import (
+	"credit-card-chooser/util"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -11,7 +13,7 @@ import (
 func main() {
 	router := gin.Default()
 	router.Use(Cors())
-	router.POST("/", test)
+	router.POST("/", ReceiveData)
 	port := os.Getenv("PORT")
 
 	if port == "" {
@@ -40,9 +42,12 @@ func Cors() gin.HandlerFunc {
 	}
 }
 
-func test(g *gin.Context) {
-	data := ""
-	g.ShouldBindJSON(&data)
+func ReceiveData(g *gin.Context) {
+	request := util.WebhookPayload{}
+	req := fmt.Sprintf("%+v", request)
+
+	fmt.Println(req)
+
 	g.JSON(200, struct {
 		Status uint16      `json:"status"`
 		Msg    string      `json:"msg"`
@@ -50,6 +55,6 @@ func test(g *gin.Context) {
 	}{
 		Status: 200,
 		Msg:    "ok",
-		Data:   data,
+		Data:   req,
 	})
 }
