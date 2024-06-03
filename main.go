@@ -35,11 +35,11 @@ type DeliveryContext struct {
 }
 
 type Message struct {
-	Type       string `json:"type"`
-	ID         string `json:"id"`
-	QuoteToken string `json:"quoteToken"`
-	Text       string `json:"text"`
-	Emojis     Emoji  `json:"emojis"`
+	Type       string  `json:"type"`
+	ID         string  `json:"id"`
+	QuoteToken string  `json:"quoteToken"`
+	Text       string  `json:"text"`
+	Emojis     []Emoji `json:"emojis"`
 }
 
 type WebhookPayload struct {
@@ -129,9 +129,12 @@ func (event *WebhookEvent) Response() {
 
 	if strings.Contains(event.Message.Text, "大湯匙") {
 		msg.Text = "小湯匙我愛妳$"
-		msg.Emojis.Index = 0
-		msg.Emojis.ProductId = "5ac1bfd5040ab15980c9b435"
-		msg.Emojis.EmojiId = "215"
+		emoji := Emoji{
+			Index:     0,
+			ProductId: "5ac1bfd5040ab15980c9b435",
+			EmojiId:   "215",
+		}
+		msg.Emojis = append(msg.Emojis, emoji)
 	}
 
 	res.Messages = append(res.Messages, msg)
