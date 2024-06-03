@@ -10,7 +10,7 @@ type WebhookEvent struct {
 	Mode            string          `json:"mode"`
 	WebhookEventID  string          `json:"webhookEventId"`
 	DeliveryContext DeliveryContext `json:"deliveryContext"`
-	Message         *Message        `json:"message,omitempty"`
+	Message         Message         `json:"message"`
 }
 
 type Source struct {

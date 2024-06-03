@@ -51,6 +51,10 @@ func ReceiveData(g *gin.Context) {
 
 	fmt.Println(req)
 
+	for _, event := range request.Events {
+		fmt.Println(event.Message.Text)
+	}
+
 	g.JSON(200, struct {
 		Status uint16      `json:"status"`
 		Msg    string      `json:"msg"`
