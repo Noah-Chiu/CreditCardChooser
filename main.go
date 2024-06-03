@@ -130,7 +130,7 @@ func (event *WebhookEvent) Response() {
 	if strings.Contains(event.Message.Text, "大湯匙") {
 		msg.Text = "小湯匙我愛妳$"
 		emoji := Emoji{
-			Index:     0,
+			Index:     6,
 			ProductId: "5ac1bfd5040ab15980c9b435",
 			EmojiId:   "215",
 		}
