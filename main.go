@@ -10,6 +10,7 @@ func main() {
 	router := gin.Default()
 	router.Use(Cors())
 	router.GET("/test", test)
+	router.Run(":8080")
 }
 
 func Cors() gin.HandlerFunc {
