@@ -1,7 +1,9 @@
 package main
 
 import (
+	"log"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
@@ -9,8 +11,16 @@ import (
 func main() {
 	router := gin.Default()
 	router.Use(Cors())
-	router.GET("/test", test)
-	router.Run(":8080")
+	router.GET("/", test)
+	port := os.Getenv("PORT")
+
+	if port == "" {
+		port = "8080"
+	}
+
+	if err := router.Run(":" + port); err != nil {
+		log.Panicf("error: %s", err)
+	}
 }
 
 func Cors() gin.HandlerFunc {
@@ -31,6 +41,8 @@ func Cors() gin.HandlerFunc {
 }
 
 func test(g *gin.Context) {
+	data := ""
+	g.ShouldBindJSON(&data)
 	g.JSON(200, struct {
 		Status uint16      `json:"status"`
 		Msg    string      `json:"msg"`
@@ -38,6 +50,6 @@ func test(g *gin.Context) {
 	}{
 		Status: 200,
 		Msg:    "ok",
-		Data:   nil,
+		Data:   data,
 	})
 }
