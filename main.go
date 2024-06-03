@@ -44,6 +44,9 @@ func Cors() gin.HandlerFunc {
 
 func ReceiveData(g *gin.Context) {
 	request := util.WebhookPayload{}
+
+	g.ShouldBind(&request)
+
 	req := fmt.Sprintf("%+v", request)
 
 	fmt.Println(req)
