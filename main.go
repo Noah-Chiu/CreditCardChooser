@@ -122,8 +122,8 @@ func (event *WebhookEvent) Response() {
 	res.ReplyToken = event.ReplyToken
 
 	msg := Message{
-		Type:       "text",
-		Text:       "hello, this is test (heart)",
+		Type: "text",
+		// Text:       "hello, this is test",
 		QuoteToken: event.Message.QuoteToken,
 	}
 
@@ -135,6 +135,32 @@ func (event *WebhookEvent) Response() {
 			EmojiId:   "215",
 		}
 		msg.Emojis = append(msg.Emojis, emoji)
+	}
+
+	// funny tool
+	for _, r := range event.Message.Text {
+		if r >= 'A' && r <= 'Z' {
+			msg.Text += "$"
+			emoji := Emoji{
+				Index:     len(msg.Text) - 1,
+				ProductId: "5ac21a8c040ab15980c9b43f",
+				EmojiId:   util.IntToDigits(int(r)-64, 3),
+			}
+			msg.Emojis = append(msg.Emojis, emoji)
+		}
+		if r >= 'a' && r <= 'z' {
+			msg.Text += "$"
+			emoji := Emoji{
+				Index:     len(msg.Text) - 1,
+				ProductId: "5ac21a8c040ab15980c9b43f",
+				EmojiId:   util.IntToDigits(int(r)-96, 3),
+			}
+			msg.Emojis = append(msg.Emojis, emoji)
+		}
+	}
+
+	if msg.Text == "" {
+		msg.Text = "hello, this is test"
 	}
 
 	res.Messages = append(res.Messages, msg)
