@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -38,6 +39,7 @@ type Message struct {
 	ID         string `json:"id"`
 	QuoteToken string `json:"quoteToken"`
 	Text       string `json:"text"`
+	Emojis     Emoji  `json:"emojis"`
 }
 
 type WebhookPayload struct {
@@ -48,6 +50,12 @@ type WebhookPayload struct {
 type Reply struct {
 	ReplyToken string    `json:"replyToken"`
 	Messages   []Message `json:"messages"`
+}
+
+type Emoji struct {
+	Index     int    `json:"index"`
+	ProductId string `json:"productId"`
+	EmojiId   string `json:"emojiId"`
 }
 
 func main() {
@@ -107,19 +115,28 @@ func ReceiveData(g *gin.Context) {
 	})
 }
 
-func (e *WebhookEvent) Response() {
+func (event *WebhookEvent) Response() {
 	var buf bytes.Buffer
 	res := Reply{}
 
-	msg := "hello, this is test"
-	res.ReplyToken = e.ReplyToken
-	res.Messages = append(res.Messages, Message{
-		Type:       "text",
-		Text:       msg,
-		QuoteToken: e.Message.QuoteToken,
-	})
+	res.ReplyToken = event.ReplyToken
 
-	fmt.Println("回傳的訊息:", msg)
+	msg := Message{
+		Type:       "text",
+		Text:       "hello, this is test (heart)",
+		QuoteToken: event.Message.QuoteToken,
+	}
+
+	if strings.Contains(event.Message.Text, "大湯匙") {
+		msg.Text = "小湯匙我愛妳"
+		msg.Emojis.Index = 6
+		msg.Emojis.ProductId = "5ac1bfd5040ab15980c9b435"
+		msg.Emojis.EmojiId = "215"
+	}
+
+	res.Messages = append(res.Messages, msg)
+
+	fmt.Println("回傳的訊息:", msg.Text)
 
 	json.NewEncoder(&buf).Encode(res)
 
