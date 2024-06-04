@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"credit-card-chooser/sql"
 	"credit-card-chooser/util"
 	"encoding/json"
 	"fmt"
@@ -16,6 +17,7 @@ import (
 func main() {
 	router := gin.Default()
 	router.Use(Cors())
+	sql.InitialDB()
 
 	// 主要功能
 	router.POST("/", Chooser)
