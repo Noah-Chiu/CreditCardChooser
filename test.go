@@ -99,5 +99,5 @@ func (event *WebhookEvent) testResponse() {
 
 	fmt.Println("回傳的訊息:", msg.Text)
 
-	ResLine(res)
+	ResLine(res, util.TestToken)
 }

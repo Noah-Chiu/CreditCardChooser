@@ -2,15 +2,14 @@ package main
 
 import (
 	"credit-card-chooser/sql"
+	"credit-card-chooser/util"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 func Schedule(g *gin.Context) {
 	request := WebhookPayload{}
-	db := sql.GetDB()
 	g.ShouldBind(&request)
 
 	req := fmt.Sprintf("%+v", request)
@@ -19,7 +18,7 @@ func Schedule(g *gin.Context) {
 
 	for _, event := range request.Events {
 		fmt.Println("收到的訊息:", event.Message.Text)
-		addSchedule(db, event)
+		event.addSchedule()
 	}
 
 	g.JSON(200, struct {
@@ -33,7 +32,9 @@ func Schedule(g *gin.Context) {
 	})
 }
 
-func addSchedule(db *gorm.DB, event WebhookEvent) {
+func (event *WebhookEvent) addSchedule() {
+	db := sql.GetDB()
+
 	cal := Calendar{
 		UserID: event.Source.UserID,
 	}
@@ -49,7 +50,7 @@ func addSchedule(db *gorm.DB, event WebhookEvent) {
 			}},
 		}
 
-		ResLine(res)
+		ResLine(res, util.CalendarToken)
 
 		fmt.Println(result.Error.Error())
 
@@ -65,5 +66,5 @@ func addSchedule(db *gorm.DB, event WebhookEvent) {
 		}},
 	}
 
-	ResLine(res)
+	ResLine(res, util.CalendarToken)
 }

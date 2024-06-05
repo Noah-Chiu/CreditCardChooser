@@ -56,7 +56,7 @@ func Cors() gin.HandlerFunc {
 	}
 }
 
-func ResLine(res Reply) {
+func ResLine(res Reply, token string) {
 	var buf bytes.Buffer
 
 	json.NewEncoder(&buf).Encode(res)
@@ -68,7 +68,7 @@ func ResLine(res Reply) {
 
 	// Set the request content type
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer {%s}", util.Token))
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer {%s}", token))
 
 	// Send the HTTP request
 	client := &http.Client{}

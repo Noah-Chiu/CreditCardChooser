@@ -1,52 +1,15 @@
 package main
 
 import (
+	"credit-card-chooser/sql"
+	"credit-card-chooser/util"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
 
-type cardInfo struct {
-	name            string
-	domesticRewards float64
-	overseasRewards float64
-	partner         map[string]float64
-}
-
 func Chooser(g *gin.Context) {
 	request := WebhookPayload{}
-	cards := []cardInfo{
-		{
-			name:            "test1",
-			domesticRewards: 1.5,
-			overseasRewards: 2,
-			partner: map[string]float64{
-				"麥當勞": 5,
-				"肯德基": 2,
-				"漢堡王": 10,
-			},
-		},
-		{
-			name:            "test2",
-			domesticRewards: 1,
-			overseasRewards: 3,
-			partner: map[string]float64{
-				"麥當勞": 1,
-				"肯德基": 2,
-				"漢堡王": 3,
-			},
-		},
-		{
-			name:            "test3",
-			domesticRewards: 0.5,
-			overseasRewards: 5,
-			partner: map[string]float64{
-				"麥當勞": 2,
-				"肯德基": 2,
-				"漢堡王": 2,
-			},
-		},
-	}
 
 	g.ShouldBind(&request)
 
@@ -56,7 +19,7 @@ func Chooser(g *gin.Context) {
 
 	for _, event := range request.Events {
 		fmt.Println("收到的訊息:", event.Message.Text)
-		event.chooseCard(cards)
+		event.chooseCard()
 	}
 
 	g.JSON(200, struct {
@@ -70,20 +33,37 @@ func Chooser(g *gin.Context) {
 	})
 }
 
-func (event *WebhookEvent) chooseCard(cards []cardInfo) {
+func (event *WebhookEvent) chooseCard() {
+	type cards struct {
+		CardNo     string
+		CardNm     string
+		Bank       string
+		DRewards   float64
+		ORewards   float64
+		StartDate  string
+		ExpireDate string
+		Note       string
+	}
+
+	db := sql.GetDB()
+
+	cardsData := []cards{}
 	res := Reply{}
 
 	res.ReplyToken = event.ReplyToken
 
-	msg := Message{
-		Type:       "text",
-		Text:       "hello, this is test",
-		QuoteToken: event.Message.QuoteToken,
+	db.Debug().Find(&cardsData)
+
+	for _, card := range cardsData {
+		msg := Message{
+			Type:       "text",
+			Text:       card.CardNm,
+			QuoteToken: event.Message.QuoteToken,
+		}
+		res.Messages = append(res.Messages, msg)
 	}
 
-	res.Messages = append(res.Messages, msg)
+	fmt.Println("回傳的訊息:", res.Messages)
 
-	fmt.Println("回傳的訊息:", msg.Text)
-
-	ResLine(res)
+	ResLine(res, util.ChooserToken)
 }
