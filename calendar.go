@@ -4,6 +4,7 @@ import (
 	"credit-card-chooser/sql"
 	"credit-card-chooser/util"
 	"fmt"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -33,10 +34,18 @@ func Schedule(g *gin.Context) {
 }
 
 func (event *WebhookEvent) addSchedule() {
+	type Calendars struct {
+		UserId   string
+		PushTime time.Time
+		PushMsg  string
+	}
+
 	db := sql.GetDB()
 
-	cal := Calendar{
-		UserID: event.Source.UserID,
+	cal := Calendars{
+		UserId:   event.Source.UserID,
+		PushTime: time.Now().Local(),
+		PushMsg:  event.Message.Text,
 	}
 	result := db.Debug().Create(&cal)
 

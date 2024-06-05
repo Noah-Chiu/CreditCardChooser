@@ -1,7 +1,5 @@
 package main
 
-import "time"
-
 // 接收格式
 type WebhookPayload struct {
 	Destination string         `json:"destination"`
@@ -48,11 +46,4 @@ type Emoji struct {
 	Index     int    `json:"index"`
 	ProductId string `json:"productId"`
 	EmojiId   string `json:"emojiId"`
-}
-
-// 行事曆DB
-type Calendar struct {
-	UserID   string    `json:"userID" gorm:"column:userID"`
-	PushTime time.Time `json:"pushTime" gorm:"column:pushTime"`
-	PushMsg  string    `json:"pushMsg" gorm:"column:pushMsg"`
 }
