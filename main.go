@@ -6,7 +6,7 @@ import (
 	"credit-card-chooser/util"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -78,7 +78,7 @@ func ResLine(res Reply, token string) {
 	}
 	defer resp.Body.Close()
 
-	sitemap, _ := ioutil.ReadAll(resp.Body)
+	sitemap, _ := io.ReadAll(resp.Body)
 
 	fmt.Println("收到的回傳:", string(sitemap))
 }
