@@ -4,6 +4,7 @@ import (
 	"credit-card-chooser/sql"
 	"credit-card-chooser/util"
 	"fmt"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -53,15 +54,39 @@ func (event *WebhookEvent) chooseCard() {
 	res.ReplyToken = event.ReplyToken
 
 	db.Debug().Find(&cardsData)
-
-	for _, card := range cardsData {
-		msg := Message{
-			Type:       "text",
-			Text:       card.CardNm,
-			QuoteToken: event.Message.QuoteToken,
-		}
-		res.Messages = append(res.Messages, msg)
+	text := strings.Split(event.Message.Text, " ")
+	partner, country := "", ""
+	if len(text) > 1 {
+		country = text[1]
 	}
+	partner = text[0]
+	fmt.Println("partner", partner)
+	bestCard := ""
+	max := 0.0
+	for _, card := range cardsData {
+		if country != "" && country != "台灣" && country != "臺灣" && strings.ToUpper(country) != "TW" && strings.ToUpper(country) != "TAIWAN" {
+			if card.CardNo == "002" {
+				if country != "日本" && strings.ToUpper(country) != "JP" && strings.ToUpper(country) != "JAPAN" {
+					card.ORewards = 1
+				}
+			}
+			if card.ORewards > max {
+				bestCard = card.CardNm + " " + card.Note
+				max = card.ORewards
+			}
+			continue
+		}
+		if card.DRewards > max {
+			bestCard = card.CardNm + " " + card.Note
+			max = card.DRewards
+		}
+	}
+	msg := Message{
+		Type:       "text",
+		Text:       bestCard,
+		QuoteToken: event.Message.QuoteToken,
+	}
+	res.Messages = append(res.Messages, msg)
 
 	fmt.Println("回傳的訊息:", res.Messages)
 
