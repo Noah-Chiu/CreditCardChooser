@@ -70,6 +70,7 @@ func (event *WebhookEvent) chooseCard() {
 
 	// 取得所有卡別
 	db.Debug().Order(`"d_rewards"`).Find(&cardsData)
+	rewardsType := ""
 	bestCardInfo := ""
 	secondCardInfo := ""
 	max := [2]float64{}
@@ -79,6 +80,7 @@ func (event *WebhookEvent) chooseCard() {
 		// --------------------------國外消費--------------------------
 		// 非台灣就是國外
 		if country != "" && country != "台灣" && country != "臺灣" && strings.ToUpper(country) != "TW" && strings.ToUpper(country) != "TAIWAN" {
+			rewardsType = fmt.Sprintf("國外消費(%s)", country)
 			// 吉鶴卡只有日本有優惠
 			if card.CardNo == "002" {
 				if country != "日本" && strings.ToUpper(country) != "JP" && strings.ToUpper(country) != "JAPAN" {
@@ -87,7 +89,7 @@ func (event *WebhookEvent) chooseCard() {
 			}
 			if card.ORewards >= max[0] {
 				secondCardInfo = bestCardInfo
-				bestCardInfo = fmt.Sprintf("國外消費(%s) =>\n卡別: %s\n總回饋: %.1f%%\n備註: %s", country, card.CardNm, card.ORewards, card.Note)
+				bestCardInfo = fmt.Sprintf("卡別: %s\n總回饋: %.1f%%\n備註: %s", card.CardNm, card.ORewards, card.Note)
 				max[1] = max[0]
 				max[0] = card.ORewards
 			}
@@ -95,6 +97,7 @@ func (event *WebhookEvent) chooseCard() {
 		}
 
 		// --------------------------國內消費--------------------------
+		rewardsType = fmt.Sprintf("國內消費(%s)", partner)
 		partnersData := []partners{}
 		addonRewards := 0.0
 		note := ""
@@ -110,7 +113,7 @@ func (event *WebhookEvent) chooseCard() {
 		totalRewards := card.DRewards + addonRewards
 		if totalRewards >= max[0] {
 			secondCardInfo = bestCardInfo
-			bestCardInfo = fmt.Sprintf("國內消費(%s) =>\n卡別: %s\n總回饋: %.1f%%\n備註: %s", partner, card.CardNm, totalRewards, note)
+			bestCardInfo = fmt.Sprintf("卡別: %s\n總回饋: %.1f%%\n備註: %s", card.CardNm, totalRewards, note)
 
 			max[1] = max[0]
 			max[0] = totalRewards
@@ -119,7 +122,7 @@ func (event *WebhookEvent) chooseCard() {
 
 	msg := Message{
 		Type:       "text",
-		Text:       fmt.Sprintf("1. %s\n2. %s", bestCardInfo, secondCardInfo),
+		Text:       rewardsType + fmt.Sprintf("\n1.\n%s\n2.\n%s", bestCardInfo, secondCardInfo),
 		QuoteToken: event.Message.QuoteToken,
 	}
 	res.Messages = append(res.Messages, msg)
