@@ -69,7 +69,7 @@ func (event *WebhookEvent) chooseCard() {
 	partner = text[0]
 
 	// 取得所有卡別
-	db.Debug().Find(&cardsData)
+	db.Debug().Order(`"d_rewards"`).Find(&cardsData)
 	bestCardInfo := ""
 	secondCardInfo := ""
 	max := [2]float64{}
@@ -85,9 +85,9 @@ func (event *WebhookEvent) chooseCard() {
 					card.ORewards = 1
 				}
 			}
-			if card.ORewards > max[0] {
+			if card.ORewards >= max[0] {
 				secondCardInfo = bestCardInfo
-				bestCardInfo = fmt.Sprintf(`國外消費(%s) => 卡別:%s 總回饋:%.1f 備註:%s`, country, card.CardNm, card.ORewards, card.Note)
+				bestCardInfo = fmt.Sprintf("國外消費(%s) =>\n卡別: %s\n總回饋: %.1f%%\n備註: %s", country, card.CardNm, card.ORewards, card.Note)
 				max[1] = max[0]
 				max[0] = card.ORewards
 			}
@@ -108,16 +108,15 @@ func (event *WebhookEvent) chooseCard() {
 			}
 		}
 		totalRewards := card.DRewards + addonRewards
-		if totalRewards > max[0] {
+		if totalRewards >= max[0] {
 			secondCardInfo = bestCardInfo
-			bestCardInfo = fmt.Sprintf(`國內消費(%s) => 卡別:%s 總回饋:%.1f`, partner, card.CardNm, totalRewards)
-			if note != "" {
-				bestCardInfo += fmt.Sprintf(` 備註:%s`, note)
-			}
+			bestCardInfo = fmt.Sprintf("國內消費(%s) =>\n卡別: %s\n總回饋: %.1f%%\n備註: %s", partner, card.CardNm, totalRewards, note)
+
 			max[1] = max[0]
 			max[0] = totalRewards
 		}
 	}
+
 	msg := Message{
 		Type:       "text",
 		Text:       fmt.Sprintf("1. %s\n2. %s", bestCardInfo, secondCardInfo),
