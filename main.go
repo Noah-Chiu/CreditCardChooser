@@ -15,6 +15,8 @@ import (
 )
 
 func main() {
+	// AddCard()
+	// return
 	router := gin.Default()
 	router.Use(Cors())
 	sql.InitialDB()
