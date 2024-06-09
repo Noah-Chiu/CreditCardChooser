@@ -102,7 +102,11 @@ func (event *WebhookEvent) chooseCard() {
 		addonRewards := 0.0
 		note := ""
 		// 尋找合作商家
-		result := db.Debug().Where(`"card_no" = ? AND "partner" ilike ?`, card.CardNo, "%"+partner+"%").Find(&partnersData)
+		result := db.Debug().
+			Where(`"card_no" = ? AND "partner" ilike ?`, card.CardNo, "%"+partner+"%").
+			Order(`"rewards" desc`).
+			Limit(1).
+			Find(&partnersData)
 		if result.RowsAffected > 0 {
 			rewardsType += fmt.Sprintf("(%s)", partnersData.Partner)
 			addonRewards = partnersData.Rewards
