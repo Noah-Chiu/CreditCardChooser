@@ -108,7 +108,7 @@ func (event *WebhookEvent) chooseCard() {
 			Limit(1).
 			Find(&partnersData)
 		if result.RowsAffected > 0 {
-			rewardsType += fmt.Sprintf("(%s)", partnersData.Partner)
+			rewardsType = fmt.Sprintf("國內消費(%s)", partnersData.Partner)
 			addonRewards = partnersData.Rewards
 			note = partnersData.Note
 		}
