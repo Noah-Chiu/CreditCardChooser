@@ -110,8 +110,10 @@ func (event *WebhookEvent) chooseCard() {
 		}
 		totalRewards := card.DRewards + addonRewards
 		if totalRewards >= max[0] {
+			secondCardInfo = bestCardInfo
 			bestCardInfo = fmt.Sprintf("卡別: %s\n總回饋: %.1f%%\n備註: %s", card.CardNm, totalRewards, note)
 
+			max[1] = max[0]
 			max[0] = totalRewards
 		} else if totalRewards >= max[1] {
 			secondCardInfo = fmt.Sprintf("卡別: %s\n總回饋: %.1f%%\n備註: %s", card.CardNm, totalRewards, note)
