@@ -97,26 +97,26 @@ func (event *WebhookEvent) chooseCard() {
 		}
 
 		// --------------------------國內消費--------------------------
-		rewardsType = fmt.Sprintf("國內消費(%s)", partner)
-		partnersData := []partners{}
+		rewardsType = "國內消費"
+		partnersData := partners{}
 		addonRewards := 0.0
 		note := ""
 		// 尋找合作商家
-		db.Debug().Where(`"card_no" = ?`, card.CardNo).Find(&partnersData)
-		for _, item := range partnersData {
-			if strings.EqualFold(item.Partner, partner) {
-				addonRewards += item.Rewards
-				note = item.Note
-				break
-			}
+		result := db.Debug().Where(`"card_no" = ? AND "partner" ilike ?`, card.CardNo, "%"+partner+"%").Find(&partnersData)
+		if result.RowsAffected > 0 {
+			rewardsType += fmt.Sprintf("(%s)", partnersData.Partner)
+			addonRewards = partnersData.Rewards
+			note = partnersData.Note
 		}
 		totalRewards := card.DRewards + addonRewards
 		if totalRewards >= max[0] {
-			secondCardInfo = bestCardInfo
 			bestCardInfo = fmt.Sprintf("卡別: %s\n總回饋: %.1f%%\n備註: %s", card.CardNm, totalRewards, note)
 
-			max[1] = max[0]
 			max[0] = totalRewards
+		} else if totalRewards >= max[1] {
+			secondCardInfo = fmt.Sprintf("卡別: %s\n總回饋: %.1f%%\n備註: %s", card.CardNm, totalRewards, note)
+
+			max[1] = totalRewards
 		}
 	}
 
