@@ -70,7 +70,7 @@ func (event *WebhookEvent) chooseCard() {
 
 	// 取得所有卡別
 	db.Debug().Order(`"d_rewards"`).Find(&cardsData)
-	rewardsType := ""
+	rewardsType := "國內消費"
 	bestCardInfo := ""
 	secondCardInfo := ""
 	max := [2]float64{}
@@ -97,7 +97,7 @@ func (event *WebhookEvent) chooseCard() {
 		}
 
 		// --------------------------國內消費--------------------------
-		rewardsType = "國內消費"
+
 		partnersData := partners{}
 		addonRewards := 0.0
 		note := ""
