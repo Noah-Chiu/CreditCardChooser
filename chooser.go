@@ -71,7 +71,7 @@ func (event *WebhookEvent) chooseCard() {
 	// 取得所有相對應的商家
 	diffPartners := []string{}
 	// 尋找合作商家
-	db.Debug().
+	db.Debug().Table(`"partners"`).
 		Select(`"partner"`).
 		Where(`"partner" ilike ?`, "%"+inPartner+"%").
 		Group(`"partner"`).
