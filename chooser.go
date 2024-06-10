@@ -93,6 +93,9 @@ func (event *WebhookEvent) chooseCard() {
 			return
 		}
 
+		userMsg.UserId = event.Source.UserID
+		userMsg.Bot = "A"
+		userMsg.Msg = inputText
 		userMsg.UpdateTime = now
 		result := db.Debug().Where(`"user_id" = ? AND bot = 'A'`, event.Source.UserID).Updates(&userMsg)
 
