@@ -229,7 +229,7 @@ func (event *WebhookEvent) chooseCard() {
 	// 成功發出要清空訊息
 	userMsg.Msg = ""
 	userMsg.UpdateTime = now
-	db.Debug().Where(`"user_id" = ? AND bot = 'A'`, event.Source.UserID).Updates(&userMsg)
+	db.Debug().Select(`*`).Where(`"user_id" = ? AND bot = 'A'`, event.Source.UserID).Updates(&userMsg)
 
 	ResLine(res, util.ChooserToken)
 }
