@@ -168,7 +168,10 @@ func (event *WebhookEvent) chooseCard() {
 				}
 				totalRewards := card.DRewards + addonRewards
 
+				fmt.Println(123, rankArray, totalRewards)
 				decideCards(&rankArray, &bestCardInfo, &secondCardInfo, card.CardNm, note, totalRewards)
+
+				fmt.Println(456, rankArray, totalRewards)
 			}
 
 			msg := Message{
