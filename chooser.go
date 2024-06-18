@@ -45,11 +45,10 @@ func Chooser(g *gin.Context) {
 	req := fmt.Sprintf("%+v", request)
 
 	fmt.Println(req)
-	cardType := g.Query("cardType")
 
 	for _, event := range request.Events {
 		fmt.Println("收到的訊息:", event.Message.Text)
-		event.chooseCard(cardType)
+		event.chooseCard()
 	}
 
 	g.JSON(200, struct {
@@ -63,40 +62,49 @@ func Chooser(g *gin.Context) {
 	})
 }
 
-func (event *WebhookEvent) chooseCard(cardType string) {
+func (event *WebhookEvent) chooseCard() {
 	db := sql.GetDB()
-	// now := time.Now().Local()
+	now := time.Now().Local()
 
 	cardsData := []cards{}
 	res := Reply{}
 
 	res.ReplyToken = event.ReplyToken
 	inputText := event.Message.Text
-	// userMsg := userMsgs{}
 
-	// // 取得該人員目前訊息
-	// db.Debug().Where(`"user_id" = ? AND bot = 'A'`, event.Source.UserID).Find(&userMsg)
+	userMsg := userMsgs{}
 
-	// 如果沒有query
-	if cardType == "" {
-		// 如果輸入訊息不是國內也不是國外就要直接return
-		// if inputText != "國內" && inputText != "國外" {
+	// 如果沒有挾帶資料
+	if event.Postback.Data == "" {
+		userMsg.UserId = event.Source.UserID
+		userMsg.Bot = "A"
+		userMsg.Msg = inputText
+		userMsg.UpdateTime = now
+		result := db.Debug().Where(`"user_id" = ? AND bot = 'A'`, event.Source.UserID).Updates(&userMsg)
+
+		if result.RowsAffected == 0 {
+			userMsg.CreateTime = now
+			db.Debug().Create(&userMsg)
+		}
+
 		msg := Message{
 			Type:    "template",
 			AltText: "Choose domestic or overseas",
 			Template: Template{
 				Type: "confirm",
-				Text: "請選擇國內或國外",
+				Text: "設定商家成功，請選擇國內或國外",
 				Actions: []Action{
 					{
-						Type:  "message",
+						Type:  "postback",
 						Label: "國內",
-						Text:  "國內",
+						Text:  "已選擇國內",
+						Data:  "D",
 					},
 					{
-						Type:  "message",
+						Type:  "postback",
 						Label: "國外",
-						Text:  "國外",
+						Text:  "已選擇國外",
+						Data:  "O",
 					},
 				},
 			},
@@ -107,41 +115,9 @@ func (event *WebhookEvent) chooseCard(cardType string) {
 
 		ResLine(res, util.ChooserToken)
 		return
-		// }
-
-		// userMsg.UserId = event.Source.UserID
-		// userMsg.Bot = "A"
-		// userMsg.Msg = inputText
-		// userMsg.UpdateTime = now
-		// result := db.Debug().Where(`"user_id" = ? AND bot = 'A'`, event.Source.UserID).Updates(&userMsg)
-
-		// if result.RowsAffected == 0 {
-		// 	userMsg.CreateTime = now
-		// 	db.Debug().Create(&userMsg)
-		// }
-
-		// 	partner := ""
-		// 	switch inputText {
-		// 	case "國內":
-		// 		partner = "商家名稱"
-		// 	case "國外":
-		// 		partner = "國家名稱"
-		// 	}
-
-		// 	msg := Message{
-		// 		Type:       "text",
-		// 		Text:       "請輸入" + partner,
-		// 		QuoteToken: event.Message.QuoteToken,
-		// 	}
-		// 	res.Messages = append(res.Messages, msg)
-
-		// 	fmt.Println("回傳的訊息:", res.Messages)
-
-		// 	ResLine(res, util.ChooserToken)
-		// 	return
 	}
 
-	// ---------------------------------------------如果有query之後---------------------------------------------
+	// ---------------------------------------------如果有儲存的訊息之後---------------------------------------------
 	// 相異的合作商家
 	diffPartners := []string{}
 
@@ -160,7 +136,7 @@ func (event *WebhookEvent) chooseCard(cardType string) {
 	rewardsType := ""
 	rankArray := []float64{0.0, 0.0}
 
-	switch cardType {
+	switch event.Postback.Data {
 	// --------------------------國內消費--------------------------
 	case "D":
 		// 如果有找到合作商家各卡別要加上合作商家的回饋
@@ -241,11 +217,6 @@ func (event *WebhookEvent) chooseCard(cardType string) {
 	}
 
 	fmt.Println("回傳的訊息:", res.Messages)
-
-	// 成功發出要清空訊息
-	// userMsg.Msg = ""
-	// userMsg.UpdateTime = now
-	// db.Debug().Select(`*`).Where(`"user_id" = ? AND bot = 'A'`, event.Source.UserID).Updates(&userMsg)
 
 	ResLine(res, util.ChooserToken)
 }

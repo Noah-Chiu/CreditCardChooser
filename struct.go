@@ -16,6 +16,7 @@ type WebhookEvent struct {
 	WebhookEventID  string          `json:"webhookEventId"`
 	DeliveryContext DeliveryContext `json:"deliveryContext"`
 	Message         Message         `json:"message"`
+	Postback        Postback        `json:"postback"`
 }
 
 type Source struct {
@@ -44,6 +45,19 @@ type Message struct {
 	Template   Template `json:"template"`
 }
 
+// 挾帶檔案
+type Postback struct {
+	Data   string `json:"data"`
+	Params Params `json:"params"`
+}
+
+// 挾帶檔案
+type Params struct {
+	Datetime           string `json:"datetime"`
+	NewRichMenuAliasId string `json:"newRichMenuAliasId"`
+	Status             string `json:"status"`
+}
+
 type Emoji struct {
 	Index     int    `json:"index"`
 	ProductId string `json:"productId"`
@@ -55,6 +69,7 @@ type Action struct {
 	Label string `json:"label"`
 	Text  string `json:"text"`
 	Uri   string `json:"uri"`
+	Data  string `json:"data"`
 }
 
 type Template struct {
