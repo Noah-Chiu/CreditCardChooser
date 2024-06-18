@@ -35,15 +35,30 @@ type Reply struct {
 
 // 訊息
 type Message struct {
-	Type       string  `json:"type"`
-	ID         string  `json:"id"`
-	QuoteToken string  `json:"quoteToken"`
-	Text       string  `json:"text"`
-	Emojis     []Emoji `json:"emojis"`
+	Type       string   `json:"type"`
+	ID         string   `json:"id"`
+	QuoteToken string   `json:"quoteToken"`
+	Text       string   `json:"text"`
+	Emojis     []Emoji  `json:"emojis"`
+	AltText    string   `json:"altText"`
+	Template   Template `json:"template"`
 }
 
 type Emoji struct {
 	Index     int    `json:"index"`
 	ProductId string `json:"productId"`
 	EmojiId   string `json:"emojiId"`
+}
+
+type Action struct {
+	Type  string `json:"type"`
+	Label string `json:"label"`
+	Text  string `json:"text"`
+	Uri   string `json:"uri"`
+}
+
+type Template struct {
+	Type    string   `json:"type"`
+	Text    string   `json:"text"`
+	Actions []Action `json:"actions"`
 }
