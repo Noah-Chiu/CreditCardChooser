@@ -58,7 +58,13 @@ func Cors() gin.HandlerFunc {
 	}
 }
 
-func ResLine(res Reply, token string) {
+func Response(res Reply, token string) {
+	if len(res.Messages) > 5 {
+		res.Messages = []Message{{
+			Type: "text",
+			Text: "符合條件過多\n請再試一次",
+		}}
+	}
 	var buf bytes.Buffer
 
 	json.NewEncoder(&buf).Encode(res)

@@ -65,11 +65,12 @@ type Emoji struct {
 }
 
 type Action struct {
-	Type  string `json:"type"`
-	Label string `json:"label"`
-	Text  string `json:"text"`
-	Uri   string `json:"uri"`
-	Data  string `json:"data"`
+	Type        string `json:"type"`
+	Label       string `json:"label"`
+	Text        string `json:"text"`
+	DisplayText string `json:"displayText"`
+	Uri         string `json:"uri"`
+	Data        string `json:"data"`
 }
 
 type Template struct {

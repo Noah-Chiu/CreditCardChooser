@@ -92,19 +92,19 @@ func (event *WebhookEvent) chooseCard() {
 			AltText: "Choose domestic or overseas",
 			Template: Template{
 				Type: "confirm",
-				Text: "設定商家成功，請選擇國內或國外",
+				Text: "設定商家成功\n請選擇國內或國外",
 				Actions: []Action{
 					{
-						Type:  "postback",
-						Label: "國內",
-						Text:  "已選擇國內",
-						Data:  "D",
+						Type:        "postback",
+						Label:       "國內",
+						DisplayText: "已選擇國內",
+						Data:        "D",
 					},
 					{
-						Type:  "postback",
-						Label: "國外",
-						Text:  "已選擇國外",
-						Data:  "O",
+						Type:        "postback",
+						Label:       "國外",
+						DisplayText: "已選擇國外",
+						Data:        "O",
 					},
 				},
 			},
@@ -113,7 +113,7 @@ func (event *WebhookEvent) chooseCard() {
 
 		fmt.Println("回傳的訊息:", res.Messages)
 
-		ResLine(res, util.ChooserToken)
+		Response(res, util.ChooserToken)
 		return
 	}
 
@@ -218,7 +218,7 @@ func (event *WebhookEvent) chooseCard() {
 
 	fmt.Println("回傳的訊息:", res.Messages)
 
-	ResLine(res, util.ChooserToken)
+	Response(res, util.ChooserToken)
 }
 
 // 決定最佳卡片

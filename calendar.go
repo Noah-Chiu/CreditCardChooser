@@ -59,7 +59,7 @@ func (event *WebhookEvent) addSchedule() {
 			}},
 		}
 
-		ResLine(res, util.CalendarToken)
+		Response(res, util.CalendarToken)
 
 		fmt.Println(result.Error.Error())
 
@@ -75,5 +75,5 @@ func (event *WebhookEvent) addSchedule() {
 		}},
 	}
 
-	ResLine(res, util.CalendarToken)
+	Response(res, util.CalendarToken)
 }
