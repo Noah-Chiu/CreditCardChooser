@@ -89,14 +89,14 @@ func (event *WebhookEvent) chooseCard(cardType string) {
 				Text: "請選擇國內或國外",
 				Actions: []Action{
 					{
-						Type:  "uri",
+						Type:  "message",
 						Label: "國內",
-						Uri:   "https://credit-card-chooser.onrender.com?cardType=D",
+						Text:  "國內",
 					},
 					{
-						Type:  "uri",
+						Type:  "message",
 						Label: "國外",
-						Uri:   "https://credit-card-chooser.onrender.com?cardType=O",
+						Text:  "國外",
 					},
 				},
 			},
