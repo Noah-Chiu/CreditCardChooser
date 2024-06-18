@@ -253,7 +253,7 @@ func (event *WebhookEvent) chooseCard(cardType string) {
 // 決定最佳卡片
 func decideCards(rankArray *[]float64, bestCardInfo, secondCardInfo *string, cardNm, note string, totalRewards float64) {
 	if totalRewards >= (*rankArray)[0] { // 如果比最大的大要改第一+第二
-		secondCardInfo = bestCardInfo
+		*secondCardInfo = *bestCardInfo
 		*bestCardInfo = fmt.Sprintf("卡別: %s\n總回饋: %.1f%%", cardNm, totalRewards)
 		if note != "" {
 			*bestCardInfo += fmt.Sprintf("\n備註: %s", note)
