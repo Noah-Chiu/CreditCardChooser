@@ -121,10 +121,13 @@ func (event *WebhookEvent) chooseCard() {
 	// 相異的合作商家
 	diffPartners := []string{}
 
+	// 取得該人員目前訊息
+	db.Debug().Where(`"user_id" = ? AND bot = 'A'`, event.Source.UserID).Find(&userMsg)
+
 	// 取得所有相異的合作商家
 	db.Debug().Table(`"partners"`).
 		Select(`"partner"`).
-		Where(`"partner" ilike ?`, "%"+inputText+"%").
+		Where(`"partner" ilike ?`, "%"+userMsg.Msg+"%").
 		Group(`"partner"`).
 		Find(&diffPartners)
 
@@ -189,13 +192,13 @@ func (event *WebhookEvent) chooseCard() {
 		}
 	// --------------------------國外消費--------------------------
 	case "O":
-		rewardsType = fmt.Sprintf("國外消費(%s)", inputText)
+		rewardsType = fmt.Sprintf("國外消費(%s)", userMsg.Msg)
 
 		// 跑過所有卡別
 		for _, card := range cardsData {
 			// 吉鶴卡只有日本有優惠
 			if card.CardNo == "002" {
-				if inputText != "日本" && strings.ToUpper(inputText) != "JP" && strings.ToUpper(inputText) != "JAPAN" {
+				if inputText != "日本" && strings.ToUpper(userMsg.Msg) != "JP" && strings.ToUpper(userMsg.Msg) != "JAPAN" {
 					card.ORewards = 1
 				}
 			}
